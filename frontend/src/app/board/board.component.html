@@ -1,0 +1,48 @@
+<div class="container p-5">
+    <div class="notification is-info mt-5" *ngIf="stories.length < 1">
+        Your storyboard is empty.
+    </div>
+    <div class=" columns is-8 " *ngIf="stories.length > 0">
+        <div class="column has-text-centered ">
+            <h1 class="title ">Todo</h1>
+            <div class="card m-4 " *ngFor="let todo of Todo ">
+                <div class="card-content ">
+                    <div class="content ">
+                        <span class="tag {{getStyle(todo.priority)}} ">{{todo.estimation}}</span> {{todo.title}}
+                    </div>
+                </div>
+                <footer class="card-footer ">
+                    <a class="card-footer-item " (click)="Delete(todo.id) "><i class="fas fa-trash-alt "></i></a>
+                    <a class="card-footer-item " (click)="changeState(todo.id, 1) "><i class="fas fa-chevron-right "></i></a>
+                </footer>
+            </div>
+        </div>
+        <div class="column has-text-centered ">
+            <h1 class="title ">In progress</h1>
+            <div class="card m-4 " *ngFor="let prog of InProgress ">
+                <div class="card-content ">
+                    <div class="content ">
+                        <span class="tag {{getStyle(prog.priority)}} ">{{prog.estimation}}</span> {{prog.title}}
+                    </div>
+                </div>
+                <footer class="card-footer ">
+                    <a class="card-footer-item " (click)="Delete(prog.id) "><i class="fas fa-trash-alt "></i></a>
+                    <a class="card-footer-item " (click)="changeState(prog.id, 2) "><i class="fas fa-chevron-right "></i></a>
+                </footer>
+            </div>
+        </div>
+        <div class="column has-text-centered ">
+            <h1 class="title ">Done</h1>
+            <div class="card m-4 " *ngFor="let done of Done ">
+                <div class="card-content ">
+                    <div class="content ">
+                        <span class="tag {{getStyle(done.priority)}}">{{done.estimation}}</span> {{done.title}}
+                    </div>
+                </div>
+                <footer class="card-footer ">
+                    <a class="card-footer-item " (click)="Delete(done.id) "><i class="fas fa-trash-alt "></i></a>
+                </footer>
+            </div>
+        </div>
+    </div>
+</div>

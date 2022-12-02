@@ -1,0 +1,37 @@
+<div class="container p-5">
+    <div class="field">
+        <label class="label">Title</label>
+        <div class="control">
+            <input class="input" type="text" placeholder="Story title" #title [class]="style" (change)="btn.disabled = title.value.length < 1">
+        </div>
+    </div>
+    <div class="field">
+        <label class="label">Estimation</label>
+        <div class="select">
+            <select [(ngModel)]="selectedPoint" (change)="checkDanger(false)">
+                <option *ngFor="let point of points" [value]="point.value"> {{point.value}}</option>
+            </select>
+        </div>
+    </div>
+
+    <strong>Priority:</strong>
+    <div class="control">
+        <label class="radio">
+            <input type="radio" name="answer" value="false" [checked]="selectedPoint <= 2" #low (change)="checkDanger(true)">
+            Low
+        </label>
+        <label class="radio">
+            <input type="radio" name="answer" value="true"  [checked]="selectedPoint > 2"  #high (change)="checkDanger(false)">
+            High
+
+        </label>
+    </div>
+    <br>
+    <button #btn class="button is-primary" disabled (click)="CreateBoard(title.value, low.checked)" (click)="btn.disabled = true" (click)="title.value = ''">Create</button>
+    <div class="notification is-primary mt-5 " *ngIf="showNotification && error">
+        {{story.title}} {{story.estimation}} has been added to the board with id={{story.id}}
+    </div>
+    <div class="notification is-danger mt-5 " *ngIf="showNotification && !error">
+        An error has occured. The story could not be created.
+    </div>
+</div>

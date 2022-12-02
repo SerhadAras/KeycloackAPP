@@ -1,3 +1,1 @@
-# KeycloackAPP
-
-Scrumboard app van het webframeworks examen. Keycloak verwerkt, nog geen OPA!
+Examen web frameworks geintegreerd met keycloak. Zonder OPA!
