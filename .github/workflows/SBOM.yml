@@ -1,0 +1,20 @@
+name: Create SBOM
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - run: npm install -g snyk-to-sarif
+      - run: snyk-to-sarif --input=package-lock.json --output=sbom.json
+      - name: Upload SBOM
+        uses: actions/upload-artifact@v2
+        with:
+          name: sbom
+          path: sbom.json
