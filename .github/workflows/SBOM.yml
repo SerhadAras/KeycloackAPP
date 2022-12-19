@@ -7,15 +7,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Install dependencies
+      - name: Install Snyk
         run: |
-          sudo apt-get update
-          sudo apt-get install -y npm
-          npm install -g dep-scan
+          curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+          sudo apt-get install -y nodejs
+          npm install -g snyk
       - name: Generate SBOM
-        run: dep-scan --format sbom --output sbom.json .
+        run: snyk test --file=package-lock.json --json > snyk.json
       - name: Upload SBOM
         uses: actions/upload-artifact@v3
         with:
           name: sbom
-          path: sbom.json
+          path: snyk.json
