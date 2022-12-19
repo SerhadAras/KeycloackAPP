@@ -1,19 +1,24 @@
-name: Create SBOM
+# SBOM + Automated software composition analysis (Find Vuln in SBOM)
+name: Generate SBOM
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
-  create-sbom:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Install dependencies
-        run: npm install
+      - uses: actions/checkout@v3
+      - name: Download and install Trivy
+        run: |
+          wget https://github.com/aquasecurity/trivy/releases/download/v0.33.0/trivy_0.33.0_Linux-64bit.deb
+          sudo dpkg -i trivy_0.33.0_Linux-64bit.deb
       - name: Generate SBOM
-        run: snyk wizard --generate-snyk-file
-      - name: Commit SBOM
-        uses: stefanzweifel/git-auto-commit-action@v4.1.0
+        run: trivy fs --format cyclonedx --security-checks vuln --output sbom.json .
+      - name: Upload SBOM
+        uses: actions/upload-artifact@v3
         with:
-          commit_message: "Update SBOM"
-          file_pattern: "snyk.yml"
-          branch: main
+          name: sbom
+          path: sbom.json
