@@ -1,3 +1,4 @@
+name: SCA
 on:
   push:
     branches: [ main, master ]
