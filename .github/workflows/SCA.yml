@@ -7,17 +7,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Install Trivy
-      run: |
-        curl -sL https://github.com/aquasecurity/trivy/releases/download/v0.12.0/trivy_0.12.0_Linux-64bit.tar.gz | tar zxvf -
-        mv trivy /usr/local/bin
-    - name: Scan for vulnerabilities
-      run: |
-        trivy -f json --exit-code 1 --severity CRITICAL --output results.json .
     - name: Install sbom
       run: |
         go get -u github.com/dpb587/bosh-dep-tool/sbom
 
     - name: Generate SBOM
-      run: sbom -f json -i results.json -o sbom.json
+      run: sbom -f json -i . -o sbom.json
     
