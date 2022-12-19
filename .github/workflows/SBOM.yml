@@ -1,26 +1,21 @@
 name: Generate SBOM
 
-on:
-  push:
-    branches:
-      - main
+on: [push]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Download and install OWASP Dependency-Check
+      - name: Install dependencies
         run: |
-          wget https://dl.bintray.com/jeremy-long/owasp/dependency-check-5.3.2.zip
-          unzip dependency-check-5.3.2.zip
-          chmod +x dependency-check/bin/dependency-check.sh
+          sudo apt-get update
+          sudo apt-get install -y npm
+          npm install -g dep-scan
       - name: Generate SBOM
-        run: dependency-check/bin/dependency-check.sh --project "My Project" --out "./sbom" --format "JSON" .
-      - name: Create file in repository
-        uses: actions/create-or-update-file@v4
+        run: dep-scan --format sbom --output sbom.json .
+      - name: Upload SBOM
+        uses: actions/upload-artifact@v3
         with:
-          path: sbom/sbom.json
-          content: ${{ toJson(file('./sbom/sbom.json')) }}
-          message: "Add SBOM"
-          branch: sbom
+          name: sbom
+          path: sbom.json
