@@ -1,28 +1,23 @@
-name: SCA
-on: [push, pull_request]
+on:
+  push:
+    branches: [ main, master ]
 
 jobs:
-  build:
+  scan:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python environment
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.8
-    - name: Install dependencies
+    - name: Install Trivy
       run: |
-        python -m pip install virtualenv
-        virtualenv env
-        source env/bin/activate
-        pip install owasp-dependency-check
-    - name: Run SCA
+        curl -sL https://github.com/aquasecurity/trivy/releases/download/v0.12.0/trivy_0.12.0_Linux-64bit.tar.gz | tar zxvf -
+        mv trivy /usr/local/bin
+    - name: Scan for vulnerabilities
       run: |
-        owasp-dependency-check --project "My Project" --scan .
+        trivy --format json --exit-code 1 --severity CRITICAL,HIGH --output results.json <target>
+    - name: Install sbom
+      run: |
+        go get -u github.com/dpb587/bosh-dep-tool/sbom
+
     - name: Generate SBOM
-      run: snyk-to-bom owasp-dependency-check-report.xml > SCA_SBOM.json
-    - name: Upload SBOM
-      uses: actions/upload-artifact@v2
-      with:
-        name: SCA_SBOM
-        path: SCA_SBOM.json
+      run: sbom -f json -i results.json -o sbom.json
+    
