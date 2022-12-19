@@ -3,18 +3,17 @@ name: Create SBOM
 on: [push]
 
 jobs:
-  build:
+  create-sbom:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - name: Install dependencies
+        run: npm install
+      - name: Generate SBOM
+        run: snyk wizard --generate-snyk-file
+      - name: Commit SBOM
+        uses: stefanzweifel/git-auto-commit-action@v4.1.0
         with:
-          node-version: '12.x'
-      - run: npm install -g snyk-to-sarif
-      - run: snyk-to-sarif --input=package-lock.json --output=sbom.json
-      - name: Upload SBOM
-        uses: actions/upload-artifact@v2
-        with:
-          name: sbom
-          path: sbom.json
+          commit_message: "Update SBOM"
+          file_pattern: "snyk.yml"
+          branch: main
