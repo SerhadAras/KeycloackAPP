@@ -13,7 +13,7 @@ jobs:
         mv trivy /usr/local/bin
     - name: Scan for vulnerabilities
       run: |
-        trivy --format json --exit-code 1 --severity CRITICAL,HIGH --output results.json .
+        trivy -f json --exit-code 1 --severity CRITICAL --output results.json .
     - name: Install sbom
       run: |
         go get -u github.com/dpb587/bosh-dep-tool/sbom
