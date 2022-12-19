@@ -1,4 +1,3 @@
-# SBOM + Automated software composition analysis (Find Vuln in SBOM)
 name: Generate SBOM
 
 on:
@@ -11,14 +10,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Download and install Trivy
+      - name: Download and install OWASP Dependency-Check
         run: |
-          wget https://github.com/aquasecurity/trivy/releases/download/v0.33.0/trivy_0.33.0_Linux-64bit.deb
-          sudo dpkg -i trivy_0.33.0_Linux-64bit.deb
+          wget https://dl.bintray.com/jeremy-long/owasp/dependency-check-5.3.2.zip
+          unzip dependency-check-5.3.2.zip
+          chmod +x dependency-check/bin/dependency-check.sh
       - name: Generate SBOM
-        run: trivy fs --format cyclonedx --security-checks vuln --output sbom.json .
-      - name: Upload SBOM
-        uses: actions/upload-artifact@v3
+        run: dependency-check/bin/dependency-check.sh --project "My Project" --out "./sbom" --format "JSON" .
+      - name: Create file in repository
+        uses: actions/create-or-update-file@v4
         with:
-          name: sbom
-          path: sbom.json
+          path: sbom/sbom.json
+          content: ${{ toJson(file('./sbom/sbom.json')) }}
+          message: "Add SBOM"
+          branch: sbom
