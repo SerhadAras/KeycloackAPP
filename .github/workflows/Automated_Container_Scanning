@@ -13,21 +13,12 @@ jobs:
       - name: Build first image
         uses: docker/build-push-action@v3
         with:
-          context: ./frontend/
+          context: .
           tags: user/app:latest
-        
-      - name: Build second image
-        uses: docker/build-push-action@v3
-        with:
-          context: ./frontend/simple-node-api-master/
-          tags: user/app2:latest
-      
+          
       - name: Scan for vulnerabilities
         uses: crazy-max/ghaction-container-scan@v2
         with:
           image: user/app:latest
           
-      - name: Scan for vulnerabilities
-        uses: crazy-max/ghaction-container-scan@v2
-        with:
-          image: user/app2:latest
+
